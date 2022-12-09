@@ -1,12 +1,12 @@
 {
   "name": "web_monitor",
   "version": "1.0.0",
-  "description": "Application which will help check if pool places are available",
+  "description": "Application which will help check if visa rendez is available",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "noscript": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Oussama Choumoul",
+  "author": "matich",
   "license": "ISC",
   "dependencies": {
     "puppeteer": "^9.1.1",
