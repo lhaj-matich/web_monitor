@@ -1,7 +1,7 @@
 {
   "name": "web_monitor",
   "version": "1.0.0",
-  "description": "Application which will help check if visa rendez is available",
+  "description": "Application which will help check if visa rendez vous is available",
   "main": "index.js",
   "scripts": {
     "noscript": "echo \"Error: no test specified\" && exit 1"
