@@ -1,90 +1,33 @@
 // Initialze push notification application
 let Pushover = require("pushover-js").Pushover;
 const puppeteer = require("puppeteer");
-const config = require("./config");
 const fs = require("fs");
+// Config file which contains all the key values
+const config = require("./config");
+// Constructor responsible for sending notifications
+const pushover = new Pushover(config.user, config.token);
 
-const pushover = new Pushover(config.user, config.token); // Constructor responsible for sending notifications
-
-// Utility Function
+// Utility function
 const delay = (time) => {
     return new Promise(function (resolve) {
         setTimeout(resolve, time);
     });
 };
 
+// Script start function
 const init = async () => {
-    fs.writeFileSync(
-        "logfile.txt",
-        "[+] Application Started: " + new Date().toUTCString() + "\n"
-    );
+    fs.appendFileSync(config.logFile, `[+] ${new Date().toUTCString()} Application started` + "\n");
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setViewport({ width: 1200, height: 760 });
-
-    const checkStatus = async () => {
-        try {
-            var i = 0;
-            await page.goto(config.checkURL, { waitUntil: "networkidle0" });
-            // await page.waitForSelector("something", {
-            //     timeout: 5000
-            // });
-            const url = await page.url();
-            if (url == config.checkURL) {
-                await page.screenshot({
-                    path: `./screenshotB${Math.round(Math.random() * 10)}.png`,
-                    fullPage: true
-                });
-                while (i < 2) {
-                    // This tag will wait 5 second if less it will go the evaluation
-                    await page.waitForSelector(config.buttons.popupTag, {
-                        visible: true,
-                        timeout: 5000
-                    });
-                    const data = await page.evaluate((config) => {
-                        const el = document.querySelector(config.buttons.popupTag);
-                        return el ? el.innerText : false;
-                    }, config);
-                    console.log(data);
-                    // if (data == !config.checkPhrase || !data) {
-                    //     // await pushover
-                    //     //     .send(
-                    //     //         "Visa Alert",
-                    //     //         "Rendez vous places are available or something is wrong with the API"
-                    //     //     )
-                    //     //     .then(console.log)
-                    //     //     .catch(console.error);
-                    //     console.log(data);
-                    //     console.log("The rendez vous might still be available.");
-                    //     config.status = false;
-                    // }
-                    await page.screenshot({
-                        path: `./screenshotCheck${Math.round(
-                            Math.random() * 10
-                        )}.png`,
-                        fullPage: true
-                    });
-                    console.log("Waiting...");
-                    await delay(
-                        5000 + Math.round(Math.round(Math.random() * 10))
-                    ); //! This function should be rewritten in order to give random refresh values.
-                    console.log("Reloading page.");
-                    await page.reload({ waitUntil: "networkidle0" });
-                    console.log("[+] Checking: " + new Date().toUTCString());
-                    i++;
-                }
-            } else {
-                await logIn();
-                await checkPool();
-            }
-        } catch (e) {
-            console.log(e);
-            await browser.close();
-            await delay(5000);
-            await checkStatus();
-        }
+    //? Logout function
+    const logOut = async () => {
+        config.status = false;
+        await delay(5000);
+        await browser.close();
+        fs.appendFileSync(config.logFile, `[-] ${new Date().toUTCString()} Application stopped` + "\n");
     };
-
+    //? Login function
     const logIn = async () => {
         try {
             await page.goto(config.homeURL, { waitUntil: "networkidle0" });
@@ -98,27 +41,60 @@ const init = async () => {
                 page.click(config.buttons.loginButton),
                 page.waitForNavigation({ waitUntil: "networkidle0" })
             ]);
-            console.log("Logged on");
-            await page.screenshot({
-                path: `./screenshotLogin${Math.round(Math.random() * 10)}.png`,
-                fullPage: true
-            });
-            fs.appendFileSync(
-                "logfile.txt",
-                "[+] logged in: " + new Date().toUTCString() + "\n"
-            );
-            // console.log("[+] Page swtich: " + new Date().toUTCString());
+            fs.appendFileSync(config.logFile, `[+] ${new Date().toUTCString()} Logged in succesfully.` + "\n");
         } catch (e) {
-            console.log(e);
-            console.log("Debug: Retrying login !!!");
-            await delay(5000);
+            fs.appendFileSync(config.logFile, `[-] ${new Date().toUTCString()} LoginError: ${e.Message}` + +"\n");
+            await pushover.send("Visa Alert", `[-] LoginError: ${e.Message}`);
+            await delay(10000);
             await logIn();
         }
     };
-    await logIn();
+    //? Check function
+    const checkStatus = async () => {
+        await logIn();
+        await page.goto(config.checkURL, { waitUntil: "networkidle0" });
+        await page.waitForSelector(config.buttons.popupTag, {
+            visible: true,
+            timeout: 10000
+        });
+        try {
+            while (config.status) {
+                const url = await page.url();
+                if (url == config.checkURL) {
+                    const data = await page.evaluate((config) => {
+                        const el = document.querySelector(config.buttons.popupTag);
+                        return el ? el.innerText : false;
+                    }, config);
+                    if (data == !config.checkPhrase || !data) {
+                        // await pushover.send(
+                        //     "Visa Alert",
+                        //     "Rendez vous places are available or something is wrong with the API"
+                        // );
+                        console.log("Sending the alert!!!");
+                        await logOut();
+                    }
+                    console.log("No places are available");
+                    await page.screenshot({
+                        path: `./screenshot.png`,
+                        fullPage: true
+                    });
+                    await delay(5000 + Math.round(Math.round(Math.random() * 10))); //! This function should be rewritten in order to give random refresh values.
+                    await page.reload({ waitUntil: "networkidle0" });
+                    fs.appendFileSync(
+                        config.logFile,
+                        `[+] ${new Date().toUTCString()} ${data ? data : "No text in selector"}` + "\n"
+                    );
+                } else {
+                    await checkStatus();
+                }
+            }
+        } catch (e) {
+            fs.appendFileSync(config.logFile, `[-] ${new Date().toUTCString()} CheckError: ${e.Message}` + +"\n");
+            await logOut();
+            await checkStatus();
+        }
+    };
     await checkStatus();
-    // await checkPool();
-    // This method should only be called when done processing the check up.
     await browser.close();
 };
 
