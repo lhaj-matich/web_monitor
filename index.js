@@ -23,8 +23,6 @@ const init = async () => {
     //? Logout function
     const logOut = async () => {
         config.status = false;
-        await delay(5000);
-        await browser.close();
         fs.appendFileSync(config.logFile, `[-] ${new Date().toUTCString()} Application stopped` + "\n");
     };
     //? Login function
@@ -37,14 +35,11 @@ const init = async () => {
             ]);
             await page.type("#username", config.CREDS.username);
             await page.type("#password", config.CREDS.password);
-            await Promise.all([
-                page.click(config.buttons.loginButton),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
-            ]);
+            await Promise.all([page.click(config.buttons.loginButton), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             fs.appendFileSync(config.logFile, `[+] ${new Date().toUTCString()} Logged in succesfully.` + "\n");
         } catch (e) {
-            fs.appendFileSync(config.logFile, `[-] ${new Date().toUTCString()} LoginError: ${e.Message}` + +"\n");
-            await pushover.send("Visa Alert", `[-] LoginError: ${e.Message}`);
+            fs.appendFileSync(config.logFile, `[-] ${new Date().toUTCString()} LoginError: ${e.message}` + +"\n");
+            // await pushover.send("Visa Alert", `[-] LoginError: ${e.message}`);
             await delay(10000);
             await logIn();
         }
@@ -67,30 +62,31 @@ const init = async () => {
                     }, config);
                     if (data == !config.checkPhrase || !data) {
                         // await pushover.send(
-                        //     "Visa Alert",
-                        //     "Rendez vous places are available or something is wrong with the API"
+                        //     "Visa Alert - Places",
+                        //     "Rendez vous places are available. Please stop the program and check."
                         // );
-                        console.log("Sending the alert!!!");
                         await logOut();
                     }
-                    console.log("No places are available");
                     await page.screenshot({
                         path: `./screenshot.png`,
                         fullPage: true
                     });
-                    await delay(5000 + Math.round(Math.round(Math.random() * 10))); //! This function should be rewritten in order to give random refresh values.
+                    await delay(5000 + Math.round(Math.random() * 10)); //! This function should be rewritten in order to give random refresh values.
                     await page.reload({ waitUntil: "networkidle0" });
                     fs.appendFileSync(
                         config.logFile,
-                        `[+] ${new Date().toUTCString()} ${data ? data : "No text in selector"}` + "\n"
+                        `[+] ${new Date().toUTCString()} ${
+                            data ? data : "Selector not found: Please stop script and check the main page."
+                        }` + "\n"
                     );
                 } else {
                     await checkStatus();
                 }
             }
         } catch (e) {
-            fs.appendFileSync(config.logFile, `[-] ${new Date().toUTCString()} CheckError: ${e.Message}` + +"\n");
-            await logOut();
+            fs.appendFileSync(config.logFile, `[-] ${new Date().toUTCString()} CheckError: ${e.message}` + +"\n");
+            // await pushover.send("Visa Alert: check error", `[-] ${new Date().toUTCString()} CheckError: ${e.message}`);
+            await delay(5000);
             await checkStatus();
         }
     };
