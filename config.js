@@ -1,6 +1,6 @@
 module.exports = {
-    user: "uoe4tzdvxdkj5jbbpowm17xfetc42m",
-    token: "af6nb5v83wm3ri93hpuw6z9xti2axo",
+    user: "u1qmabz6pkbfnuecchzt9vusfbh7i2",
+    token: "abjx7dh96vwpugu4jz67hjrcx8vg7h",
     CREDS: {
         username: "CMM.sud@hotmail.com",
         password: "CMMsud@2021"
@@ -16,6 +16,8 @@ module.exports = {
         popupTag:
             "#app > div.tls-appointment > div.tls-popup-display > div.tls-popup-display--container > div > div > div.tls-popup--body > div:nth-child(2) > div:nth-child(1) > div"
     },
+    refreshRate: 20000, // 20 seconds
+    refreshDelay: 20000, // 20 seconds
     logFile: "logfile.txt"
 };
 

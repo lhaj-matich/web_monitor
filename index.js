@@ -7,24 +7,25 @@ const config = require("./config");
 // Constructor responsible for sending notifications
 const pushover = new Pushover(config.user, config.token);
 
-// Utility function
+//? Utility function
 const delay = (time) => {
     return new Promise(function (resolve) {
         setTimeout(resolve, time);
     });
 };
 
-// Script start function
-const init = async () => {
-    fs.appendFileSync(config.logFile, `[+] ${new Date().toUTCString()} Application started` + "\n");
+//? Logout function
+exports.logOut = async () => {
+    config.status = false;
+    fs.appendFileSync(config.logFile, `[-] ${new Date().toLocaleString()} Application stopped` + "\n");
+};
+
+//? Script start function
+exports.init = async () => {
+    fs.appendFileSync(config.logFile, `[+] ${new Date().toLocaleString()} Application started` + "\n");
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setViewport({ width: 1200, height: 760 });
-    //? Logout function
-    const logOut = async () => {
-        config.status = false;
-        fs.appendFileSync(config.logFile, `[-] ${new Date().toUTCString()} Application stopped` + "\n");
-    };
     //? Login function
     const logIn = async () => {
         try {
@@ -36,9 +37,9 @@ const init = async () => {
             await page.type("#username", config.CREDS.username);
             await page.type("#password", config.CREDS.password);
             await Promise.all([page.click(config.buttons.loginButton), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            fs.appendFileSync(config.logFile, `[+] ${new Date().toUTCString()} Logged in succesfully.` + "\n");
+            fs.appendFileSync(config.logFile, `[+] ${new Date().toLocaleString()} Logged in succesfully.` + "\n");
         } catch (e) {
-            fs.appendFileSync(config.logFile, `[-] ${new Date().toUTCString()} LoginError: ${e.message}` + +"\n");
+            fs.appendFileSync(config.logFile, `[-] ${new Date().toLocaleString()} LoginError: ${e.message}` + +"\n");
             // await pushover.send("Visa Alert", `[-] LoginError: ${e.message}`);
             await delay(10000);
             await logIn();
@@ -71,11 +72,12 @@ const init = async () => {
                         path: `./screenshot.png`,
                         fullPage: true
                     });
-                    await delay(5000 + Math.round(Math.random() * 10)); //! This function should be rewritten in order to give random refresh values.
+                    // ! The random function will add an interval of [1-20] seconds
+                    await delay(config.status ? (config.refreshRate + Math.round(Math.random() * config.refreshDelay)) : 1000);
                     await page.reload({ waitUntil: "networkidle0" });
                     fs.appendFileSync(
                         config.logFile,
-                        `[+] ${new Date().toUTCString()} ${
+                        `[+] ${new Date().toLocaleString()} ${
                             data ? data : "Selector not found: Please stop script and check the main page."
                         }` + "\n"
                     );
@@ -84,8 +86,8 @@ const init = async () => {
                 }
             }
         } catch (e) {
-            fs.appendFileSync(config.logFile, `[-] ${new Date().toUTCString()} CheckError: ${e.message}` + +"\n");
-            // await pushover.send("Visa Alert: check error", `[-] ${new Date().toUTCString()} CheckError: ${e.message}`);
+            fs.appendFileSync(config.logFile, `[-] ${new Date().toLocaleString()} CheckError: ${e.message}` + +"\n");
+            // await pushover.send("Visa Alert: check error", `[-] ${new Date().toLocaleString()} CheckError: ${e.message}`);
             await delay(5000);
             await checkStatus();
         }
