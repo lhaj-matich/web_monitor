@@ -18,8 +18,9 @@ app.use(cors(corsOptions));
 
 app.get("/api/v1/start", (req, res) => {
     if (!config.status) {
-        config.status = true;
+        console.log(`[+] ${new Date().toLocaleString()} The script started succesfully.`);
         init();
+        config.status = true;
         res.status(200).json({
             status: "success",
             message: "application started succesfully."
@@ -35,6 +36,7 @@ app.get("/api/v1/start", (req, res) => {
 app.get("/api/v1/stop", (req, res) => {
     if (config.status) {
         config.status = false;
+        console.log(`[+] ${new Date().toLocaleString()} The script stopped succesfully.`);
         res.status(200).json({
             status: "success",
             message: "application stopped succesfully."
@@ -48,5 +50,5 @@ app.get("/api/v1/stop", (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log("Listenning on port " + port);
+    console.log("Listenning on port: " + port);
 });

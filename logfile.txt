@@ -103,3 +103,11 @@
 [+] Tue, 13 Dec 2022 18:55:08 GMT Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
 [+] Tue, 13 Dec 2022 18:55:24 GMT Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
 [+] Tue, 13 Dec 2022 18:54:32 GMT Stopped succesfully.
+[+] 12/20/2022, 1:14:39 AM Application started
+[+] 12/20/2022, 1:15:15 AM Logged in succesfully.
+[+] 12/20/2022, 1:20:43 AM Application started
+[+] 12/20/2022, 1:21:15 AM Logged in succesfully.
+[+] 12/20/2022, 1:21:56 AM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
+[+] 12/20/2022, 1:22:41 AM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
+[+] 12/20/2022, 1:23:14 AM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
+[+] 12/20/2022, 1:24:02 AM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.

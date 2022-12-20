@@ -51,7 +51,7 @@ exports.init = async () => {
         await page.goto(config.checkURL, { waitUntil: "networkidle0" });
         await page.waitForSelector(config.buttons.popupTag, {
             visible: true,
-            timeout: 10000
+            timeout: 30000
         });
         try {
             while (config.status) {
@@ -66,21 +66,23 @@ exports.init = async () => {
                         //     "Visa Alert - Places",
                         //     "Rendez vous places are available. Please stop the program and check."
                         // );
-                        await logOut();
+                        config.status = false;
                     }
                     await page.screenshot({
                         path: `./screenshot.png`,
                         fullPage: true
                     });
                     // ! The random function will add an interval of [1-20] seconds
-                    await delay(config.status ? (config.refreshRate + Math.round(Math.random() * config.refreshDelay)) : 1000);
-                    await page.reload({ waitUntil: "networkidle0" });
-                    fs.appendFileSync(
-                        config.logFile,
-                        `[+] ${new Date().toLocaleString()} ${
-                            data ? data : "Selector not found: Please stop script and check the main page."
-                        }` + "\n"
-                    );
+                    if (config.status) {
+                        await delay(config.status ? config.refreshRate + Math.round(Math.random() * config.refreshDelay) : 1000);
+                        await page.reload({ waitUntil: "networkidle0" });
+                        fs.appendFileSync(
+                            config.logFile,
+                            `[+] ${new Date().toLocaleString()} ${
+                                data ? data : "Selector not found: Please stop script and check the main page."
+                            }` + "\n"
+                        );
+                    }
                 } else {
                     await checkStatus();
                 }
@@ -96,11 +98,8 @@ exports.init = async () => {
     await browser.close();
 };
 
-init();
-
 // ? Task
 // TODO: [-] Create a basic html page that will show the status of the api
-// TODO: [-] Create UI
 // TODO: [-] Request for status
 // TODO: [-] Create a route that will be responsible for stopping the script
 // TODO: [-] Create a route that will be responsible for starting the script
@@ -108,5 +107,3 @@ init();
 //?DONE:   >Need a function that will be responsible for logout to test the api behaviour
 //?DONE:   >Need to orginaze the part responsible for the ckeck Process
 //?DONE:   >Add a function for the login process
-//TODO:   >Route for process start in case of failure or false alterts
-//TODO:   >Add chabbot url as a alternative for pushover api
