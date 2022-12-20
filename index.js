@@ -40,7 +40,7 @@ exports.init = async () => {
             fs.appendFileSync(config.logFile, `[+] ${new Date().toLocaleString()} Logged in succesfully.` + "\n");
         } catch (e) {
             fs.appendFileSync(config.logFile, `[-] ${new Date().toLocaleString()} LoginError: ${e.message}` + +"\n");
-            // await pushover.send("Visa Alert", `[-] LoginError: ${e.message}`);
+            // await pushover.setSound("long_default").send("Visa Alert", `[-] LoginError: ${e.message}`);
             await delay(10000);
             await logIn();
         }
@@ -49,6 +49,7 @@ exports.init = async () => {
     const checkStatus = async () => {
         await logIn();
         await page.goto(config.checkURL, { waitUntil: "networkidle0" });
+        //! This function will still need further testing.
         await page.waitForSelector(config.buttons.popupTag, {
             visible: true,
             timeout: 30000
@@ -62,7 +63,7 @@ exports.init = async () => {
                         return el ? el.innerText : false;
                     }, config);
                     if (data == !config.checkPhrase || !data) {
-                        // await pushover.send(
+                        // await pushover.setSound("long_default").send(
                         //     "Visa Alert - Places",
                         //     "Rendez vous places are available. Please stop the program and check."
                         // );
@@ -89,7 +90,7 @@ exports.init = async () => {
             }
         } catch (e) {
             fs.appendFileSync(config.logFile, `[-] ${new Date().toLocaleString()} CheckError: ${e.message}` + +"\n");
-            // await pushover.send("Visa Alert: check error", `[-] ${new Date().toLocaleString()} CheckError: ${e.message}`);
+            // await pushover.setSound("long_default").send("Visa Alert: check error", `[-] ${new Date().toLocaleString()} CheckError: ${e.message}`);
             await delay(5000);
             await checkStatus();
         }

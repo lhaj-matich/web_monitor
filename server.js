@@ -19,7 +19,7 @@ app.use(cors(corsOptions));
 app.get("/api/v1/start", (req, res) => {
     if (!config.status) {
         console.log(`[+] ${new Date().toLocaleString()} The script started succesfully.`);
-        init();
+        // init();
         config.status = true;
         res.status(200).json({
             status: "success",
@@ -47,6 +47,12 @@ app.get("/api/v1/stop", (req, res) => {
             message: "application already idle."
         });
     }
+});
+
+app.get("/api/v1/status", (req, res) => {
+    res.status(200).json({
+        status: config.status,
+    });
 });
 
 app.listen(port, () => {

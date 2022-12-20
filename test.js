@@ -5,8 +5,8 @@ const pushover = new Pushover(config.user, config.token);
 
 const sendNotification = async () => {
     await pushover
-        .setSound("classical")
-        .send("Visa Alert - Places", "This is a test notification to see if everything is working properly.");
+        .setSound("long_default")
+        .send("Visa Alert - Places", "Testing the notification sound 2");
 };
 
 sendNotification();
