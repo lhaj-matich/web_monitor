@@ -18,7 +18,9 @@ module.exports = {
     },
     refreshRate: 20000, // 20 seconds
     refreshDelay: 20000, // 20 seconds
-    logFile: "logfile.txt"
+    loginDelay: 10000, // 10 seconds
+    logFile: "./public/assets/logfile.txt",
+    screenShot: "./public/assets/screenshot.png"
 };
 
 /* 

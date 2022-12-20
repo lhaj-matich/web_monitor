@@ -3,7 +3,7 @@ const cors = require("cors");
 const app = express();
 const config = require("./config");
 
-const { init } = require("./index");
+const { init, logOut } = require("./index");
 
 const port = 3000;
 
@@ -12,6 +12,8 @@ const corsOptions = {
     optionsSuccessStatus: 200
 };
 
+app.use(express.static('./public'));
+
 app.use(express.json());
 
 app.use(cors(corsOptions));
@@ -19,7 +21,7 @@ app.use(cors(corsOptions));
 app.get("/api/v1/start", (req, res) => {
     if (!config.status) {
         console.log(`[+] ${new Date().toLocaleString()} The script started succesfully.`);
-        // init();
+        init();
         config.status = true;
         res.status(200).json({
             status: "success",
@@ -35,7 +37,7 @@ app.get("/api/v1/start", (req, res) => {
 
 app.get("/api/v1/stop", (req, res) => {
     if (config.status) {
-        config.status = false;
+        logOut();
         console.log(`[+] ${new Date().toLocaleString()} The script stopped succesfully.`);
         res.status(200).json({
             status: "success",
@@ -56,5 +58,5 @@ app.get("/api/v1/status", (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log("Listenning on port: " + port);
+    console.log(`[+] ${new Date().toLocaleString()} Application started on port: ${port}`);
 });

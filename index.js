@@ -22,7 +22,7 @@ exports.logOut = async () => {
 
 //? Script start function
 exports.init = async () => {
-    fs.appendFileSync(config.logFile, `[+] ${new Date().toLocaleString()} Application started` + "\n");
+    fs.writeFileSync(config.logFile, `[+] ${new Date().toLocaleString()} Application started` + "\n");
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setViewport({ width: 1200, height: 760 });
@@ -37,9 +37,9 @@ exports.init = async () => {
             await page.type("#username", config.CREDS.username);
             await page.type("#password", config.CREDS.password);
             await Promise.all([page.click(config.buttons.loginButton), page.waitForNavigation({ waitUntil: "networkidle0" })]);
-            fs.appendFileSync(config.logFile, `[+] ${new Date().toLocaleString()} Logged in succesfully.` + "\n");
+            fs.appendFileSync(config.logFile, `[+] ${new Date().toLocaleString()} Logged in successfully.` + "\n");
         } catch (e) {
-            fs.appendFileSync(config.logFile, `[-] ${new Date().toLocaleString()} LoginError: ${e.message}` + +"\n");
+            fs.appendFileSync(config.logFile, `[-] ${new Date().toLocaleString()} LoginError: ${e.message}` + "\n");
             // await pushover.setSound("long_default").send("Visa Alert", `[-] LoginError: ${e.message}`);
             await delay(10000);
             await logIn();
@@ -68,21 +68,20 @@ exports.init = async () => {
                         //     "Rendez vous places are available. Please stop the program and check."
                         // );
                         config.status = false;
-                    }
-                    await page.screenshot({
-                        path: `./screenshot.png`,
-                        fullPage: true
-                    });
-                    // ! The random function will add an interval of [1-20] seconds
-                    if (config.status) {
-                        await delay(config.status ? config.refreshRate + Math.round(Math.random() * config.refreshDelay) : 1000);
-                        await page.reload({ waitUntil: "networkidle0" });
                         fs.appendFileSync(
                             config.logFile,
                             `[+] ${new Date().toLocaleString()} ${
                                 data ? data : "Selector not found: Please stop script and check the main page."
                             }` + "\n"
                         );
+                    }
+                    await page.screenshot({
+                        path: config.screenShot,
+                        fullPage: true
+                    });
+                    if (config.status) {
+                        await delay(config.status ? config.refreshRate + Math.round(Math.random() * config.refreshDelay) : 1000);
+                        await page.reload({ waitUntil: "networkidle0" });
                     }
                 } else {
                     await checkStatus();
@@ -91,7 +90,7 @@ exports.init = async () => {
         } catch (e) {
             fs.appendFileSync(config.logFile, `[-] ${new Date().toLocaleString()} CheckError: ${e.message}` + +"\n");
             // await pushover.setSound("long_default").send("Visa Alert: check error", `[-] ${new Date().toLocaleString()} CheckError: ${e.message}`);
-            await delay(5000);
+            await delay(config.loginDelay);
             await checkStatus();
         }
     };
@@ -100,11 +99,11 @@ exports.init = async () => {
 };
 
 // ? Task
-// TODO: [-] Create a basic html page that will show the status of the api
-// TODO: [-] Request for status
-// TODO: [-] Create a route that will be responsible for stopping the script
-// TODO: [-] Create a route that will be responsible for starting the script
-// ?DONE: [-] Check if creds are still in place : login infomations
-//?DONE:   >Need a function that will be responsible for logout to test the api behaviour
-//?DONE:   >Need to orginaze the part responsible for the ckeck Process
-//?DONE:   >Add a function for the login process
+//?DONE: Create a basic html page that will show the status of the api.
+//?DONE: Request for status.
+//?DONE: Create a route that will be responsible for stopping the script.
+//?DONE: Create a route that will be responsible for starting the script.
+//?DONE: Check if creds are still in place : login infomations.
+//?DONE: Function that will change the status of the application.
+//?DONE: Rewrite the check function.
+//?DONE: Add a function for the login process.
