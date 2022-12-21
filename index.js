@@ -30,10 +30,7 @@ exports.init = async () => {
     const logIn = async () => {
         try {
             await page.goto(config.homeURL, { waitUntil: "networkidle0" });
-            await Promise.all([
-                page.click(config.buttons.loginAccessButton),
-                page.waitForNavigation({ waitUntil: "networkidle0" })
-            ]);
+            await Promise.all([page.click(config.buttons.loginAccessButton), page.waitForNavigation({ waitUntil: "networkidle0" })]);
             await page.type("#username", config.CREDS.username);
             await page.type("#password", config.CREDS.password);
             await Promise.all([page.click(config.buttons.loginButton), page.waitForNavigation({ waitUntil: "networkidle0" })]);
@@ -49,11 +46,15 @@ exports.init = async () => {
     const checkStatus = async () => {
         await logIn();
         await page.goto(config.checkURL, { waitUntil: "networkidle0" });
-        //! This function will still need further testing.
         await page.waitForSelector(config.buttons.popupTag, {
             visible: true,
-            timeout: 30000
-        });
+            timeout: 20000
+        }).catch((e) => {
+            fs.appendFileSync(
+                config.logFile,
+                `[+] ${new Date().toLocaleString()} ${e.message}` + "\n"
+            );
+        })
         try {
             while (config.status) {
                 const url = await page.url();
@@ -68,17 +69,15 @@ exports.init = async () => {
                         //     "Rendez vous places are available. Please stop the program and check."
                         // );
                         config.status = false;
-                        fs.appendFileSync(
-                            config.logFile,
-                            `[+] ${new Date().toLocaleString()} ${
-                                data ? data : "Selector not found: Please stop script and check the main page."
-                            }` + "\n"
-                        );
                     }
                     await page.screenshot({
                         path: config.screenShot,
                         fullPage: true
                     });
+                    await fs.appendFileSync(
+                        config.logFile,
+                        `[+] ${new Date().toLocaleString()} ${data ? data : "Selector not found: Please stop application and go check"}` + "\n"
+                    );
                     if (config.status) {
                         await delay(config.status ? config.refreshRate + Math.round(Math.random() * config.refreshDelay) : 1000);
                         await page.reload({ waitUntil: "networkidle0" });
@@ -88,7 +87,7 @@ exports.init = async () => {
                 }
             }
         } catch (e) {
-            fs.appendFileSync(config.logFile, `[-] ${new Date().toLocaleString()} CheckError: ${e.message}` + +"\n");
+            fs.appendFileSync(config.logFile, `[-] ${new Date().toLocaleString()} CheckError: ${e.message}` + "\n");
             // await pushover.setSound("long_default").send("Visa Alert: check error", `[-] ${new Date().toLocaleString()} CheckError: ${e.message}`);
             await delay(config.loginDelay);
             await checkStatus();

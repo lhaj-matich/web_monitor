@@ -3,12 +3,12 @@ const pauseButton = document.getElementById("pause");
 const statusHolder = document.getElementById("status");
 const onlineColor = "#21F900";
 const offlineColor = "#ff0000";
-const Host = '192.168.1.7'
+const Host = '192.168.1.2:5000'
 
 
 playButton.addEventListener("click", async (e) => {
   e.preventDefault();
-  await fetch(`http://${Host}:3000/api/v1/start`, {
+  await fetch(`http://${Host}/api/v1/start`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -19,7 +19,7 @@ playButton.addEventListener("click", async (e) => {
 
 pauseButton.addEventListener("click", async (e) => {
   e.preventDefault();
-  await fetch(`http://${Host}:3000/api/v1/stop`, {
+  await fetch(`http://${Host}/api/v1/stop`, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -30,7 +30,7 @@ pauseButton.addEventListener("click", async (e) => {
 
 const displayStatus = async () => {
   // Fetch the status from the API
-  fetch(`http://${Host}:3000/api/v1/status`, {
+  fetch(`http://${Host}/api/v1/status`, {
     method: "GET",
     headers: {
       Accept: "application/json",

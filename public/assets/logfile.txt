@@ -1,6 +1,8 @@
-[+] 12/20/2022, 11:39:21 PM Application started
-[-] 12/20/2022, 11:40:07 PM LoginError: Navigation timeout of 30000 ms exceeded0[+] 12/20/2022, 11:40:53 PM Logged in succesfully.
-[+] 12/20/2022, 11:41:43 PM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
-[+] 12/20/2022, 11:42:27 PM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
-[+] 12/20/2022, 11:43:11 PM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
-[+] 12/20/2022, 11:43:52 PM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
+[+] 12/21/2022, 11:09:50 PM Application started
+[+] 12/21/2022, 11:10:07 PM Logged in successfully.
+[+] 12/21/2022, 11:10:15 PM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
+[+] 12/21/2022, 11:10:53 PM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
+[+] 12/21/2022, 11:11:21 PM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
+[+] 12/21/2022, 11:12:05 PM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
+[+] 12/21/2022, 11:12:49 PM Désolé, il n'y a pas de rendez-vous disponible pour le moment, veuillez vérifier plus tard.
+[-] 12/21/2022, 11:13:05 PM Application stopped

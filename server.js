@@ -5,7 +5,7 @@ const config = require("./config");
 
 const { init, logOut } = require("./index");
 
-const port = 3000;
+const port = 5000;
 
 const corsOptions = {
     origin: "*",
